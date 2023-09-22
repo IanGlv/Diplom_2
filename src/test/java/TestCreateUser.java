@@ -1,23 +1,22 @@
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.Matchers.is;
+import static org.apache.http.HttpStatus.*;
 
-public class TestCreateUser {
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
-    }
+public class TestCreateUser extends BaseTest {
 
     @Test
     @DisplayName("Create unique user")
     public void testCreateUniqueUser() {
         CreateUser createUser = new CreateUser();
         Response correctCreateUniqueUser = createUser.getCreateUser(new User("whte208@gmail.com","qwerty124", "john"));
-        correctCreateUniqueUser.then().statusCode(200);
+        accessToken = correctCreateUniqueUser.path("accessToken");
+        correctCreateUniqueUser.then().statusCode(SC_OK);
+
+        DeleteUser deleteUser = new DeleteUser( );
+        Response correctDelete = deleteUser.getDeleteUser(accessToken);
+        correctDelete.then().statusCode(SC_ACCEPTED);
     }
 
     @Test
@@ -25,7 +24,7 @@ public class TestCreateUser {
     public void testCreateExistingUser() {
         CreateUser createUser = new CreateUser();
         Response errorCreateExistingUser = createUser.getCreateUser(new User("whte208@gmail.com","qwerty124", "john"));
-        errorCreateExistingUser.then().statusCode(403).and().assertThat().body("success", is(false), "message", is("User already exists"));;
+        errorCreateExistingUser.then().statusCode(SC_FORBIDDEN).and().assertThat().body("success", is(false), "message", is("User already exists"));;
     }
 
     @Test
@@ -33,7 +32,7 @@ public class TestCreateUser {
     public void testCreateUserWithoutEmail() {
         CreateUser createUser = new CreateUser();
         Response errorCreateUserWithoutEmail = createUser.getCreateUser(new User("","qwerty124", "john"));
-        errorCreateUserWithoutEmail.then().statusCode(403).and().assertThat().body("success", is(false), "message", is("Email, password and name are required fields"));;
+        errorCreateUserWithoutEmail.then().statusCode(SC_FORBIDDEN).and().assertThat().body("success", is(false), "message", is("Email, password and name are required fields"));;
     }
 
     @Test
@@ -41,7 +40,7 @@ public class TestCreateUser {
     public void testCreateUserWithoutPassword() {
         CreateUser createUser = new CreateUser();
         Response errorCreateUserWithoutPassword = createUser.getCreateUser(new User("whte208@gmail.com","", "john"));
-        errorCreateUserWithoutPassword.then().statusCode(403).and().assertThat().body("success", is(false), "message", is("Email, password and name are required fields"));;
+        errorCreateUserWithoutPassword.then().statusCode(SC_FORBIDDEN).and().assertThat().body("success", is(false), "message", is("Email, password and name are required fields"));;
     }
 
     @Test
@@ -49,7 +48,7 @@ public class TestCreateUser {
     public void testCreateUserWithoutName() {
         CreateUser createUser = new CreateUser();
         Response errorCreateUserWithoutName = createUser.getCreateUser(new User("whte208@gmail.com","", "john"));
-        errorCreateUserWithoutName.then().statusCode(403).and().assertThat().body("success", is(false), "message", is("Email, password and name are required fields"));;
+        errorCreateUserWithoutName.then().statusCode(SC_FORBIDDEN).and().assertThat().body("success", is(false), "message", is("Email, password and name are required fields"));;
     }
 
 }

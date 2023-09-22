@@ -1,23 +1,17 @@
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.Before;
 import org.junit.Test;
 import static org.hamcrest.Matchers.is;
+import static org.apache.http.HttpStatus.*;
 
-public class TestLoginUser {
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
-    }
+public class TestLoginUser extends BaseTest {
 
     @Test
     @DisplayName("Login with existing user")
     public void testLoginWithExistingUser() {
         LoginUser loginUser = new LoginUser();
         Response correctLoginWithExistingUser = loginUser.getLoginUser(new User("whte208@gmail.com","qwerty124", "john"));
-        correctLoginWithExistingUser.then().statusCode(200).and().assertThat().body("success", is(true));
+        correctLoginWithExistingUser.then().statusCode(SC_OK).and().assertThat().body("success", is(true));
     }
 
     @Test
@@ -25,7 +19,7 @@ public class TestLoginUser {
     public void testLoginWithWrongLogin() {
         LoginUser loginUser = new LoginUser();
         Response errorLoginWithWrongLogin = loginUser.getLoginUser(new User("whte208@gmail.com","qwerty124", "john"));
-        errorLoginWithWrongLogin.then().statusCode(401).and().assertThat().body("success", is(false), "message", is("email or password are incorrect"));
+        errorLoginWithWrongLogin.then().statusCode(SC_UNAUTHORIZED).and().assertThat().body("success", is(false), "message", is("email or password are incorrect"));
     }
 
     @Test
@@ -33,7 +27,7 @@ public class TestLoginUser {
     public void testLoginWithWrongPassword() {
         LoginUser loginUser = new LoginUser();
         Response errorLoginWithWrongPassword = loginUser.getLoginUser(new User("whte208@gmail.com","qwerty123", "john"));
-        errorLoginWithWrongPassword.then().statusCode(401).and().assertThat().body("success", is(false), "message", is("email or password are incorrect"));
+        errorLoginWithWrongPassword.then().statusCode(SC_UNAUTHORIZED).and().assertThat().body("success", is(false), "message", is("email or password are incorrect"));
     }
 
 }

@@ -1,41 +1,23 @@
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.Before;
 import org.junit.Test;
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
+import static org.apache.http.HttpStatus.*;
 
-public class TestEditUser {
+public class TestEditUser extends BaseTest {
 
     public String accessToken;
     private static final String USER = "/api/auth/user";
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
-    }
 
     @Test
     @DisplayName("Edit data user with auth")
     public void testEditDataUserWithAuth() {
 
-        String body = " { \"email\": \"whte208@gmail.com\", \"password\": \"qwerty124\", \"name\": \"johny\" } ";
-
         EditUser editUser = new EditUser();
         Response getDataUserWithAuth = editUser.getDataUser(new User("whte208@gmail.com","qwerty124", "john"));
         accessToken = getDataUserWithAuth.path("accessToken");
-
-        Response editDataUserWithAuth = given ()
-                .header("Content-type", "application/json")
-                .header("Authorization", accessToken)
-                .and()
-                .body(body)
-                .when()
-                .patch(USER);
-
+        Response editDataUserWithAuth = editUser.getResponse(accessToken);
         editDataUserWithAuth.then().assertThat().body("success", is(true));
-
     }
 
     @Test
@@ -43,7 +25,7 @@ public class TestEditUser {
     public void testEditDataUserWithoutAuth() {
         EditUser editUser = new EditUser();
         Response getDataUserWithoutAuth = editUser.getEditDataUserWithoutAuth(new User("whte208@gmail.com","qwerty124", "john"));
-        getDataUserWithoutAuth.then().statusCode(401).and().assertThat().body("success", is(false), "message", is("You should be authorised"));
+        getDataUserWithoutAuth.then().statusCode(SC_UNAUTHORIZED).and().assertThat().body("success", is(false), "message", is("You should be authorised"));
     }
 
 }
