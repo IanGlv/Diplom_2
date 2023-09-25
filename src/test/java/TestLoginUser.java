@@ -18,7 +18,7 @@ public class TestLoginUser extends BaseTest {
     @DisplayName("Login with wrong login")
     public void testLoginWithWrongLogin() {
         LoginUser loginUser = new LoginUser();
-        Response errorLoginWithWrongLogin = loginUser.getLoginUser(new User("whte208@gmail.com","qwerty124", "john"));
+        Response errorLoginWithWrongLogin = loginUser.getLoginUser(new User("whte28@gmail.com","qwerty12", "john"));
         errorLoginWithWrongLogin.then().statusCode(SC_UNAUTHORIZED).and().assertThat().body("success", is(false), "message", is("email or password are incorrect"));
     }
 

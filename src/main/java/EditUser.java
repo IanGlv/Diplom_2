@@ -30,7 +30,7 @@ public class EditUser {
 
     @Step("Получить токен")
     public Response getResponse (String accessToken) {
-        Body body = new Body("eliseev_23@gmail.com", "qwerty124", "johny");
+        Body body = new Body("whte208@gmail.com", "qwerty124", "john");
         return given ()
                 .header("Content-type", "application/json")
                 .header("Authorization", accessToken)

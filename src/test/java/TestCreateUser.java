@@ -10,7 +10,7 @@ public class TestCreateUser extends BaseTest {
     @DisplayName("Create unique user")
     public void testCreateUniqueUser() {
         CreateUser createUser = new CreateUser();
-        Response correctCreateUniqueUser = createUser.getCreateUser(new User("whte208@gmail.com","qwerty124", "john"));
+        Response correctCreateUniqueUser = createUser.getCreateUser(new User("208@gmail.com","qwerty124", "john"));
         accessToken = correctCreateUniqueUser.path("accessToken");
         correctCreateUniqueUser.then().statusCode(SC_OK);
 
